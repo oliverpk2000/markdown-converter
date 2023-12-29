@@ -18,5 +18,9 @@
   "dependencies": {
     "chalk": "^5.3.0",
     "commander": "^11.1.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/oliverpk2000/markdown-converter.git"
   }
 }
