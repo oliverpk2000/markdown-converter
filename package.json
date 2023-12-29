@@ -13,11 +13,11 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "marked": "^11.1.0"
   },
   "dependencies": {
     "chalk": "^4.1.2",
-    "commander": "^11.1.0"
+    "commander": "^11.1.0",
+    "marked": "^11.1.0"
   },
   "repository": {
     "type": "git",
