@@ -13,8 +13,6 @@ const fileEnd =
     `</body>
     </html>`;
 
-main('markdown-files', 'html-files', 'sub-files');
-
 function main(ogDir, indexDir, subDir) {
     const mdfiles = fs.readdirSync(ogDir, {withFileTypes: true})
         .filter(item => !item.isDirectory())
@@ -44,7 +42,7 @@ function build(dir, paths) {
     let cwd = process.cwd().toString().trim();
     let indexfile = '';
     indexfile = indexfile + fileHead;
-    for (path of paths) {
+    for (let path of paths) {
         let htmltag = `<div>
             <object data="${path}" type="text/html"></object>
         </div>`
@@ -53,3 +51,5 @@ function build(dir, paths) {
     indexfile = indexfile + fileEnd;
     fs.writeFileSync(`${cwd}\\${dir}\\index.html`, indexfile);
 }
+
+module.exports = {main};
