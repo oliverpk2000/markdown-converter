@@ -4,12 +4,11 @@ const {program} = require('commander')
 const {main} = require('./converter.js')
 
 program
-    .command('convert <ogDir> <indexDir> <subDir>')
-    .description('converts .md files in the ogDir to .html and puts them in the subDir, ' +
-        'then creates an index.html in the indexDir. ' +
-        'All directories have to be in the same directory and where you execute the command')
+    .command('convert <mdDir>')
+    .description('converts .md files in mdDir to .html and puts them into html-files. ' +
+        'mdDir has to be a directory directly under where you executed the program',)
     .action(function () {
-        main(process.argv[3], process.argv[4], process.argv[5]);
+        main(process.argv[3], 'html', 'pages');
     });
 
 program.parse(process.argv);
