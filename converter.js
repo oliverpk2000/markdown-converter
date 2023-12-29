@@ -14,6 +14,9 @@ const fileEnd =
     </html>`;
 
 function main(ogDir, indexDir, subDir) {
+    if(!fs.existsSync(indexDir)){
+        fs.mkdirSync(indexDir);
+    }
     const mdfiles = fs.readdirSync(ogDir, {withFileTypes: true})
         .filter(item => !item.isDirectory())
         .map(item => item.name);
