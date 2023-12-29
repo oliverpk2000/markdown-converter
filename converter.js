@@ -1,6 +1,6 @@
 let marked = require('marked');
 let fs = require('fs');
-const fileHead =
+const mainFileHead =
     `<!DOCTYPE html>
     <html lang="en">
     <head>
@@ -9,7 +9,7 @@ const fileHead =
     </head>
     <body>`;
 
-const fileEnd =
+const mainFileEnd =
     `</body>
     </html>`;
 
@@ -44,14 +44,17 @@ function convert(ogDir, newDir, file) {
 function build(dir, paths) {
     let cwd = process.cwd().toString().trim();
     let indexfile = '';
-    indexfile = indexfile + fileHead;
+    indexfile = indexfile + mainFileHead;
     for (let path of paths) {
-        let htmltag = `<div>
-            <object data="${path}" type="text/html"></object>
+        let htmltag = `
+        <div>
+            <iframe src="${path}" onload='(function(o){o.style.height=o.contentWindow.document.body.scrollHeight+"px";}(this));' 
+            style="height:200px;width:100%;border:none;overflow:hidden;">    
+        </iframe>
         </div>`
         indexfile = indexfile + htmltag;
     }
-    indexfile = indexfile + fileEnd;
+    indexfile = indexfile + mainFileEnd;
     fs.writeFileSync(`${cwd}\\${dir}\\index.html`, indexfile);
 }
 
