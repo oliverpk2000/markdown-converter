@@ -1,5 +1,7 @@
 let marked = require('marked');
 let fs = require('fs');
+const chalk = require('chalk');
+
 const mainFileHead =
     `<!DOCTYPE html>
     <html lang="en">
@@ -14,8 +16,10 @@ const mainFileEnd =
     </html>`;
 
 function main(ogDir, indexDir, subDir) {
-    if(!fs.existsSync(indexDir)){
+    console.log(chalk.blue('starting md-convert'));
+    if (!fs.existsSync(indexDir)) {
         fs.mkdirSync(indexDir);
+        console.log(chalk.green('created directory html'));
     }
     const mdfiles = fs.readdirSync(ogDir, {withFileTypes: true})
         .filter(item => !item.isDirectory())
@@ -28,6 +32,7 @@ function main(ogDir, indexDir, subDir) {
         htmlpaths.push(pathToHtml);
     }
     build(indexDir, htmlpaths);
+    console.log(chalk.blue('thanks for using md-convert :)'));
 }
 
 function convert(ogDir, newDir, file) {
@@ -37,8 +42,10 @@ function convert(ogDir, newDir, file) {
     let fileNoExt = file.split('.')[0];
     if (!fs.existsSync(newDir)) {
         fs.mkdirSync(newDir);
+        console.log(chalk.green('created directory pages'));
     }
     fs.writeFileSync(`${cwd}\\${newDir}\\${fileNoExt}.html`, html);
+    console.log(chalk.green(`converted file ${fileNoExt}.md --> ${fileNoExt}.html`));
 }
 
 function build(dir, paths) {
