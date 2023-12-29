@@ -24,7 +24,7 @@ function main(ogDir, indexDir, subDir) {
     const mdfiles = fs.readdirSync(ogDir, {withFileTypes: true})
         .filter(item => !item.isDirectory())
         .map(item => item.name);
-    mdfiles.forEach(file => convert(ogDir, `${indexDir}\\${subDir}`, file))
+    mdfiles.forEach(file => convert(ogDir, `${indexDir}/${subDir}`, file))
     let htmlpaths = [];
     for (let file of mdfiles) {
         let fileHtml = file.split('.')[0] + '.html';
@@ -37,14 +37,14 @@ function main(ogDir, indexDir, subDir) {
 
 function convert(ogDir, newDir, file) {
     let cwd = process.cwd().toString().trim();
-    let md = fs.readFileSync(`${cwd}\\${ogDir}\\${file}`, 'utf-8');
+    let md = fs.readFileSync(`${cwd}/${ogDir}/${file}`, 'utf-8');
     let html = marked.parse(md);
     let fileNoExt = file.split('.')[0];
     if (!fs.existsSync(newDir)) {
         fs.mkdirSync(newDir);
         console.log(chalk.green('created directory pages'));
     }
-    fs.writeFileSync(`${cwd}\\${newDir}\\${fileNoExt}.html`, html);
+    fs.writeFileSync(`${cwd}/${newDir}/${fileNoExt}.html`, html);
     console.log(chalk.green(`converted file ${fileNoExt}.md --> ${fileNoExt}.html`));
 }
 
