@@ -15,7 +15,7 @@ const mainFileEnd =
     `</body>
     </html>`;
 
-function main(ogDir, indexDir, subDir) {
+function converterMain(ogDir, indexDir, subDir) {
     console.log(chalk.blue('starting md-convert'));
     if (!fs.existsSync(indexDir)) {
         try {
@@ -31,6 +31,7 @@ function main(ogDir, indexDir, subDir) {
     }
     const mdfiles = fs.readdirSync(ogDir, {withFileTypes: true})
         .filter(item => !item.isDirectory())
+        .filter(item => item.name.split('.')[1] === 'md')
         .map(item => item.name);
     mdfiles.forEach(file => convert(ogDir, `${indexDir}/${subDir}`, file))
     let htmlpaths = [];
@@ -86,4 +87,4 @@ function build(dir, paths) {
     }
 }
 
-module.exports = {main};
+module.exports = {converterMain: converterMain};
