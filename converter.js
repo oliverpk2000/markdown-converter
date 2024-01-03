@@ -55,7 +55,7 @@ function build(dir, paths) {
     for (let path of paths) {
         let htmltag = `
         <div>
-            <iframe src="${path}" onload='(function(o){o.style.height=o.contentWindow.document.body.scrollHeight+"px";}(this));' 
+            <iframe src="${path}" onload='(function(o){o.style.height=o.contentWindow.document.body.height+"px";}(this));' 
             style="height:200px;width:100%;border:none;overflow:hidden;">    
         </iframe>
         </div>`
@@ -63,6 +63,7 @@ function build(dir, paths) {
     }
     indexfile = indexfile + mainFileEnd;
     fs.writeFileSync(`${cwd}\\${dir}\\index.html`, indexfile);
+    console.log(chalk.green('created index.html file'));
 }
 
 module.exports = {main};
