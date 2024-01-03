@@ -18,8 +18,16 @@ const mainFileEnd =
 function main(ogDir, indexDir, subDir) {
     console.log(chalk.blue('starting md-convert'));
     if (!fs.existsSync(indexDir)) {
-        fs.mkdirSync(indexDir);
-        console.log(chalk.green('created directory html'));
+        try {
+            fs.mkdirSync(indexDir);
+            console.log(chalk.green('created directory html'));
+        } catch (error) {
+            console.log(chalk.red('could not create /html directory'));
+        }
+    }
+    if (!fs.existsSync(ogDir)) {
+        console.log(chalk.red(`markdown file source directory ${ogDir} doesn't exist`));
+        process.exit();
     }
     const mdfiles = fs.readdirSync(ogDir, {withFileTypes: true})
         .filter(item => !item.isDirectory())
@@ -41,11 +49,19 @@ function convert(ogDir, newDir, file) {
     let html = marked.parse(md);
     let fileNoExt = file.split('.')[0];
     if (!fs.existsSync(newDir)) {
-        fs.mkdirSync(newDir);
-        console.log(chalk.green('created directory pages'));
+        try {
+            fs.mkdirSync(newDir);
+            console.log(chalk.green('created directory pages'));
+        } catch (error) {
+            console.log('could not create /html/pages directory');
+        }
     }
-    fs.writeFileSync(`${cwd}/${newDir}/${fileNoExt}.html`, html);
-    console.log(chalk.green(`converted file ${fileNoExt}.md --> ${fileNoExt}.html`));
+    try {
+        fs.writeFileSync(`${cwd}/${newDir}/${fileNoExt}.html`, html);
+        console.log(chalk.green(`converted file ${fileNoExt}.md --> ${fileNoExt}.html`));
+    } catch (error) {
+        console.log(chalk.red(`could not convert file ${fileNoExt}.md --> ${fileNoExt}.html`));
+    }
 }
 
 function build(dir, paths) {
@@ -62,8 +78,12 @@ function build(dir, paths) {
         indexfile = indexfile + htmltag;
     }
     indexfile = indexfile + mainFileEnd;
-    fs.writeFileSync(`${cwd}\\${dir}\\index.html`, indexfile);
-    console.log(chalk.green('created index.html file'));
+    try {
+        fs.writeFileSync(`${cwd}\\${dir}\\index.html`, indexfile);
+        console.log(chalk.green('created index.html file'));
+    } catch (error) {
+        console.log(chalk.green('could not create index.html file'));
+    }
 }
 
 module.exports = {main};
