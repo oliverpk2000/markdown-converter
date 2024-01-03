@@ -31,6 +31,7 @@ function main(ogDir, indexDir, subDir) {
     }
     const mdfiles = fs.readdirSync(ogDir, {withFileTypes: true})
         .filter(item => !item.isDirectory())
+        .filter(item => item.name.split('.')[1] === 'md')
         .map(item => item.name);
     mdfiles.forEach(file => convert(ogDir, `${indexDir}/${subDir}`, file))
     let htmlpaths = [];
