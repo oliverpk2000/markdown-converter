@@ -80,10 +80,10 @@ function build(dir, paths) {
     }
     indexfile = indexfile + mainFileEnd;
     try {
-        fs.writeFileSync(`${cwd}\\${dir}\\index.html`, indexfile);
+        fs.writeFileSync(`${cwd}/${dir}/index.html`, indexfile);
         console.log(chalk.green('created index.html file'));
     } catch (error) {
-        console.log(chalk.green('could not create index.html file'));
+        console.log(chalk.red('could not create index.html file'));
     }
 }
 
