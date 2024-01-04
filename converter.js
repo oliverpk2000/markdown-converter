@@ -15,7 +15,7 @@ const mainFileEnd =
     `</body>
     </html>`;
 
-function converterMain(ogDir, indexDir, subDir) {
+function main(ogDir, indexDir, subDir) {
     console.log(chalk.blue('starting md-convert'));
     if (!fs.existsSync(indexDir)) {
         try {
@@ -87,4 +87,4 @@ function build(dir, paths) {
     }
 }
 
-module.exports = {converterMain: converterMain};
+module.exports = {main: main};
