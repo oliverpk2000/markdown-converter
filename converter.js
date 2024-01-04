@@ -87,4 +87,4 @@ function build(dir, paths) {
     }
 }
 
-module.exports = {main};
+module.exports = {main: main};
