@@ -14,7 +14,7 @@ program
 
 program
     .command('scan <mdDir>')
-    .description('scans to see if everything was generated. Argument mdDir neccessary to check against .md files')
+    .description('scans to see if everything was generated. Argument mdDir necessary to check against .md files')
     .action(function () {
         scan(process.argv[3], 'html', 'pages');
     })

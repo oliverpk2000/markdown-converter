@@ -9,9 +9,9 @@
   "bin": {
     "md-convert": "./index.js"
   },
-  "keywords": [],
+  "keywords": ["markdown", "html", "converter"],
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "devDependencies": {},
   "dependencies": {
     "chalk": "^4.1.2",
