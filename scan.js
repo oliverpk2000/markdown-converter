@@ -27,8 +27,9 @@ function scan(ogDir, indexDir, subDir) {
     if(!fs.existsSync(indexDir)){
         console.log(chalk.red(`no ${indexDir} directory, therefore no index file`));
     }else{
-        console.log(chalk.blue('index file'));
-        console.log(chalk.green(`-- index.html`));
+        console.log(chalk.blue('index.html file'));
+        let indexFiles = getListOfFiles(indexDir, 'html').filter(file=> file === 'index.html');
+        printFileNameList(indexFiles);
     }
 }
 
