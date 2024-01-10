@@ -1,6 +1,7 @@
 let marked = require('marked');
 let fs = require('fs');
 const chalk = require('chalk');
+const path = require('node:path');
 
 const mainFileHead =
     `<!DOCTYPE html>
@@ -33,11 +34,11 @@ function main(ogDir, indexDir, subDir) {
         .filter(item => !item.isDirectory())
         .filter(item => item.name.split('.')[1] === 'md')
         .map(item => item.name);
-    mdfiles.forEach(file => convert(ogDir, `${indexDir}/${subDir}`, file))
+    mdfiles.forEach(file => convert(ogDir, path.join(indexDir,subDir), file))
     let htmlpaths = [];
     for (let file of mdfiles) {
         let fileHtml = file.split('.')[0] + '.html';
-        let pathToHtml = `${subDir}/${fileHtml}`;
+        let pathToHtml = path.join(subDir, fileHtml);
         htmlpaths.push(pathToHtml);
     }
     build(indexDir, htmlpaths);
@@ -46,7 +47,7 @@ function main(ogDir, indexDir, subDir) {
 
 function convert(ogDir, newDir, file) {
     let cwd = process.cwd().toString().trim();
-    let md = fs.readFileSync(`${cwd}/${ogDir}/${file}`, 'utf-8');
+    let md = fs.readFileSync(path.join(cwd, ogDir, file), 'utf-8');
     let html = marked.parse(md);
     let fileNoExt = file.split('.')[0];
     if (!fs.existsSync(newDir)) {
@@ -58,7 +59,7 @@ function convert(ogDir, newDir, file) {
         }
     }
     try {
-        fs.writeFileSync(`${cwd}/${newDir}/${fileNoExt}.html`, html);
+        fs.writeFileSync(path.join(cwd, newDir, fileNoExt + '.html'), html);
         console.log(chalk.green(`converted file ${fileNoExt}.md --> ${fileNoExt}.html`));
     } catch (error) {
         console.log(chalk.red(`could not convert file ${fileNoExt}.md --> ${fileNoExt}.html`));
@@ -80,7 +81,7 @@ function build(dir, paths) {
     }
     indexfile = indexfile + mainFileEnd;
     try {
-        fs.writeFileSync(`${cwd}/${dir}/index.html`, indexfile);
+        fs.writeFileSync(path.join(cwd, dir, 'index.html'), indexfile);
         console.log(chalk.green('created index.html file'));
     } catch (error) {
         console.log(chalk.red('could not create index.html file'));
