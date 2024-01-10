@@ -10,11 +10,11 @@ const mainFileHead =
         <meta charset="UTF-8">
         <title>index</title>
     </head>
-    <body>`;
+    <body>
+        <!I hope you have an autoformatter if you try to edit this>`;
 
 const mainFileEnd =
-    `</body>
-    </html>`;
+    `</body></html>`;
 
 function main(ogDir, indexDir, subDir) {
     console.log(chalk.blue('starting md-convert'));
@@ -34,7 +34,7 @@ function main(ogDir, indexDir, subDir) {
         .filter(item => !item.isDirectory())
         .filter(item => item.name.split('.')[1] === 'md')
         .map(item => item.name);
-    mdfiles.forEach(file => convert(ogDir, path.join(indexDir,subDir), file))
+    mdfiles.forEach(file => convert(ogDir, path.join(indexDir, subDir), file))
     let htmlpaths = [];
     for (let file of mdfiles) {
         let fileHtml = file.split('.')[0] + '.html';
@@ -70,14 +70,16 @@ function build(dir, paths) {
     let cwd = process.cwd().toString().trim();
     let indexfile = '';
     indexfile = indexfile + mainFileHead;
-    for (let path of paths) {
-        let htmltag = `
-        <div>
-            <iframe src="${path}" onload='(function(o){o.style.height=o.contentWindow.document.body.height+"px";}(this));' 
-            style="height:200px;width:100%;border:none;overflow:hidden;">    
-        </iframe>
-        </div>`
-        indexfile = indexfile + htmltag;
+    for (let pagepath of paths) {
+        try {
+            let page = fs.readFileSync(path.join(cwd, dir, pagepath), 'utf-8');
+
+            let htmltag =
+                `<div class="page">${page}</div>`
+            indexfile = indexfile + htmltag;
+        }catch (error) {
+            console.log(chalk.red(`unable to read page ${path.join(cwd, dir, pagepath)}`));
+        }
     }
     indexfile = indexfile + mainFileEnd;
     try {
