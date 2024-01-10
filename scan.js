@@ -1,12 +1,13 @@
 let fs = require('fs');
 const chalk = require('chalk');
+const path = require('node:path');
 
 function scan(ogDir, indexDir, subDir) {
     console.log(chalk.blue('directories'));
 
     printDirStatus(ogDir);
     printDirStatus(indexDir);
-    printDirStatus(`${indexDir}/${subDir}`);
+    printDirStatus(path.join(indexDir, subDir));
 
     if (!fs.existsSync(ogDir)) {
         console.log(chalk.red(`no ${ogDir} directory, therefore no src files`));
@@ -16,22 +17,22 @@ function scan(ogDir, indexDir, subDir) {
         printFileNameList(mdFiles);
     }
 
-    if (!fs.existsSync(`${indexDir}/${subDir}`)) {
-        console.log(chalk.red(`no ${indexDir}/${subDir} directory, therefore no converted files`));
+    if (!fs.existsSync(path.join(indexDir, subDir))) {
+        console.log(chalk.red(`no ${path.join(indexDir, subDir)} directory, therefore no converted files`));
     } else {
         console.log(chalk.blue('converted .html files'));
-        let htmlFiles = getListOfFiles(`${indexDir}/${subDir}`, 'html');
+        let htmlFiles = getListOfFiles(path.join(indexDir, subDir), 'html');
         printFileNameList(htmlFiles);
     }
 
-    if(!fs.existsSync(indexDir)){
+    if (!fs.existsSync(indexDir)) {
         console.log(chalk.red(`no ${indexDir} directory, therefore no index file`));
-    }else{
-        let indexFiles = getListOfFiles(indexDir, 'html').filter(file=> file === 'index.html');
-        if(indexFiles.length > 0){
+    } else {
+        let indexFiles = getListOfFiles(indexDir, 'html').filter(file => file === 'index.html');
+        if (indexFiles.length > 0) {
             console.log(chalk.blue('index.html file'));
             printFileNameList(indexFiles);
-        }else{
+        } else {
             console.log(chalk.red('no index.html found'));
         }
     }
