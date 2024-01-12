@@ -2,21 +2,24 @@ let marked = require('marked');
 let fs = require('fs');
 const chalk = require('chalk');
 const path = require('node:path');
+const {styler} = require('./styler.js');
 
-const mainFileHead =
+const mainFileHeadStart =
     `<!DOCTYPE html>
     <html lang="en">
     <head>
         <meta charset="UTF-8">
-        <title>index</title>
-    </head>
-    <body>
-        <!I hope you have an autoformatter if you try to edit this>`;
+        <title>index</title>\n`;
+const mainFileHeadEnd =
+    `</head>\n`;
+const mainFileBodyStart =
+    `<body>
+        <!I hope you have an autoformatter if you try to edit this>\n`;
 
-const mainFileEnd =
-    `</body></html>`;
+const mainFileBodyEnd =
+    `</body></html>\n`;
 
-function main(ogDir, indexDir, subDir) {
+function main(ogDir, indexDir, subDir, inline) {
     console.log(chalk.blue('starting md-convert'));
     if (!fs.existsSync(indexDir)) {
         try {
@@ -41,7 +44,7 @@ function main(ogDir, indexDir, subDir) {
         let pathToHtml = path.join(subDir, fileHtml);
         htmlpaths.push(pathToHtml);
     }
-    build(indexDir, htmlpaths);
+    build(indexDir, htmlpaths, inline);
     console.log(chalk.blue('thanks for using md-convert :)'));
 }
 
@@ -66,28 +69,48 @@ function convert(ogDir, newDir, file) {
     }
 }
 
-function build(dir, paths) {
+function build(dir, paths, inline) {
     let cwd = process.cwd().toString().trim();
     let indexfile = '';
-    indexfile = indexfile + mainFileHead;
-    for (let pagepath of paths) {
-        try {
-            let page = fs.readFileSync(path.join(cwd, dir, pagepath), 'utf-8');
-
-            let htmltag =
-                `<div class="page">${page}</div>`
-            indexfile = indexfile + htmltag;
-        }catch (error) {
-            console.log(chalk.red(`unable to read page ${path.join(cwd, dir, pagepath)}`));
-        }
+    indexfile = indexfile + mainFileHeadStart;
+    if (!inline) {
+        indexfile = indexfile + wrapStylesWithTag(styler.compoundStyles());
+    } else {
+        let filename = 'styles.css';
+        styler.createAndWriteCssFile(dir, filename);
+        indexfile = indexfile + `<link rel="stylesheet" href="${filename}"/>`;
     }
-    indexfile = indexfile + mainFileEnd;
+
+    indexfile = indexfile + mainFileHeadEnd;
+
+    indexfile = indexfile + mainFileBodyStart + joinPages(dir, paths);
+
+    indexfile = indexfile + mainFileBodyEnd;
     try {
         fs.writeFileSync(path.join(cwd, dir, 'index.html'), indexfile);
         console.log(chalk.green('created index.html file'));
     } catch (error) {
         console.log(chalk.red('could not create index.html file'));
     }
+}
+
+function joinPages(dir, paths) {
+    let cwd = process.cwd();
+    let joined = '';
+    for (let pagepath of paths) {
+        try {
+            let page = fs.readFileSync(path.join(cwd, dir, pagepath), 'utf-8');
+            let htmltag = `<div class="page">${page}</div>\n`;
+            joined = joined + htmltag;
+        } catch (error) {
+            console.log(chalk.red(`unable to read page ${path.join(cwd, dir, pagepath)}`));
+        }
+    }
+    return joined;
+}
+
+function wrapStylesWithTag(style) {
+    return `<style>${style}</style>\n`
 }
 
 module.exports = {main: main};
