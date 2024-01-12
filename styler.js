@@ -1,8 +1,15 @@
 let fs = require('fs');
 const path = require('node:path');
+const chalk = require("chalk");
 
-function createCssFile(dir, cssFileName) {
-
+function createAndWriteCssFile(dir, cssFileName) {
+    let cwd = process.cwd();
+    try {
+        fs.writeFileSync(path.join(cwd, dir, cssFileName), compoundStyles());
+        console.log(chalk.green(`created ${cssFileName} file`));
+    } catch (error) {
+        console.log(chalk.red(`couldn't created ${cssFileName} file`));
+    }
 }
 
 function getBodyStyle() {
@@ -29,9 +36,14 @@ function getTableStyle() {
     padding: 2px;}\n`;
 }
 
+function compoundStyles() {
+    return getBodyStyle() + getPageClassStyle() + getTableStyle();
+}
+
 module.exports = {
     styler: {
-        createCssFile,
+        createAndWriteCssFile,
+        compoundStyles,
         getBodyStyle,
         getPageClassStyle,
         getTableStyle

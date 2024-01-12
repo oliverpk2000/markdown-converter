@@ -5,12 +5,15 @@ const {main} = require('./converter.js')
 const {scan} = require('./scan.js');
 
 program
+    .option('-s, --style', 'adds a styles.css instead of an inline style tag', false)
+
+program
     .command('convert <mdDir>')
     .description('converts .md files in mdDir to .html and puts them into html-files. ' +
         'It has to be a direct child of the directory where you executed the command')
-    .option('-s', 'adds a styles.css instead of an inline style tag')
-    .action(function () {
-        main(process.argv[3], 'html', 'pages');
+    .action((opts) => {
+        let inline = program.opts().style;
+        main(process.argv[3], 'html', 'pages', inline);
     });
 
 program

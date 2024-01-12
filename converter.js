@@ -15,12 +15,11 @@ const mainFileHeadEnd =
 const mainFileBodyStart =
     `<body>
         <!I hope you have an autoformatter if you try to edit this>\n`;
-//<link rel="stylesheet" href="styles.css"/>
 
 const mainFileBodyEnd =
     `</body></html>\n`;
 
-function main(ogDir, indexDir, subDir) {
+function main(ogDir, indexDir, subDir, inline) {
     console.log(chalk.blue('starting md-convert'));
     if (!fs.existsSync(indexDir)) {
         try {
@@ -45,7 +44,7 @@ function main(ogDir, indexDir, subDir) {
         let pathToHtml = path.join(subDir, fileHtml);
         htmlpaths.push(pathToHtml);
     }
-    build(indexDir, htmlpaths);
+    build(indexDir, htmlpaths, inline);
     console.log(chalk.blue('thanks for using md-convert :)'));
 }
 
@@ -70,10 +69,20 @@ function convert(ogDir, newDir, file) {
     }
 }
 
-function build(dir, paths) {
+function build(dir, paths, inline) {
     let cwd = process.cwd().toString().trim();
     let indexfile = '';
-    indexfile = indexfile + mainFileHeadStart + wrapStylesWithTag(compoundStyles()) + mainFileHeadEnd;
+    indexfile = indexfile + mainFileHeadStart;
+    if (!inline) {
+        indexfile = indexfile + wrapStylesWithTag(styler.compoundStyles());
+    } else {
+        let filename = 'styles.css';
+        styler.createAndWriteCssFile(dir, filename);
+        indexfile = indexfile + `<link rel="stylesheet" href="${filename}"/>`;
+    }
+
+    indexfile = indexfile + mainFileHeadEnd;
+
     indexfile = indexfile + mainFileBodyStart + joinPages(dir, paths);
 
     indexfile = indexfile + mainFileBodyEnd;
@@ -100,11 +109,8 @@ function joinPages(dir, paths) {
     return joined;
 }
 
-function wrapStylesWithTag(style){
+function wrapStylesWithTag(style) {
     return `<style>${style}</style>\n`
-}
-function compoundStyles(){
-    return styler.getBodyStyle() + styler.getPageClassStyle() + styler.getTableStyle();
 }
 
 module.exports = {main: main};
