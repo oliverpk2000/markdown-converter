@@ -8,6 +8,7 @@ program
     .command('convert <mdDir>')
     .description('converts .md files in mdDir to .html and puts them into html-files. ' +
         'It has to be a direct child of the directory where you executed the command')
+    .option('-s', 'adds a styles.css instead of an inline style tag')
     .action(function () {
         main(process.argv[3], 'html', 'pages');
     });

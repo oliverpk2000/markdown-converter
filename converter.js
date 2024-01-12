@@ -2,19 +2,23 @@ let marked = require('marked');
 let fs = require('fs');
 const chalk = require('chalk');
 const path = require('node:path');
+const {styler} = require('./styler.js');
 
-const mainFileHead =
+const mainFileHeadStart =
     `<!DOCTYPE html>
     <html lang="en">
     <head>
         <meta charset="UTF-8">
-        <title>index</title>
-    </head>
-    <body>
-        <!I hope you have an autoformatter if you try to edit this>`;
+        <title>index</title>\n`;
+const mainFileHeadEnd =
+    `</head>\n`;
+const mainFileBodyStart =
+    `<body>
+        <!I hope you have an autoformatter if you try to edit this>\n`;
+//<link rel="stylesheet" href="styles.css"/>
 
-const mainFileEnd =
-    `</body></html>`;
+const mainFileBodyEnd =
+    `</body></html>\n`;
 
 function main(ogDir, indexDir, subDir) {
     console.log(chalk.blue('starting md-convert'));
@@ -69,25 +73,38 @@ function convert(ogDir, newDir, file) {
 function build(dir, paths) {
     let cwd = process.cwd().toString().trim();
     let indexfile = '';
-    indexfile = indexfile + mainFileHead;
-    for (let pagepath of paths) {
-        try {
-            let page = fs.readFileSync(path.join(cwd, dir, pagepath), 'utf-8');
+    indexfile = indexfile + mainFileHeadStart + wrapStylesWithTag(compoundStyles()) + mainFileHeadEnd;
+    indexfile = indexfile + mainFileBodyStart + joinPages(dir, paths);
 
-            let htmltag =
-                `<div class="page">${page}</div>`
-            indexfile = indexfile + htmltag;
-        }catch (error) {
-            console.log(chalk.red(`unable to read page ${path.join(cwd, dir, pagepath)}`));
-        }
-    }
-    indexfile = indexfile + mainFileEnd;
+    indexfile = indexfile + mainFileBodyEnd;
     try {
         fs.writeFileSync(path.join(cwd, dir, 'index.html'), indexfile);
         console.log(chalk.green('created index.html file'));
     } catch (error) {
         console.log(chalk.red('could not create index.html file'));
     }
+}
+
+function joinPages(dir, paths) {
+    let cwd = process.cwd();
+    let joined = '';
+    for (let pagepath of paths) {
+        try {
+            let page = fs.readFileSync(path.join(cwd, dir, pagepath), 'utf-8');
+            let htmltag = `<div class="page">${page}</div>\n`;
+            joined = joined + htmltag;
+        } catch (error) {
+            console.log(chalk.red(`unable to read page ${path.join(cwd, dir, pagepath)}`));
+        }
+    }
+    return joined;
+}
+
+function wrapStylesWithTag(style){
+    return `<style>${style}</style>\n`
+}
+function compoundStyles(){
+    return styler.getBodyStyle() + styler.getPageClassStyle() + styler.getTableStyle();
 }
 
 module.exports = {main: main};
