@@ -19,7 +19,7 @@ const mainFileBodyStart =
 const mainFileBodyEnd =
     `</body></html>\n`;
 
-function main(ogDir, indexDir, subDir, inline) {
+function main(ogDir, indexDir, subDir, style) {
     console.log(chalk.blue('starting md-convert'));
     if (!fs.existsSync(indexDir)) {
         try {
@@ -44,7 +44,7 @@ function main(ogDir, indexDir, subDir, inline) {
         let pathToHtml = path.join(subDir, fileHtml);
         htmlpaths.push(pathToHtml);
     }
-    build(indexDir, htmlpaths, inline);
+    build(indexDir, htmlpaths, style);
     console.log(chalk.blue('thanks for using md-convert :)'));
 }
 
@@ -69,13 +69,11 @@ function convert(ogDir, newDir, file) {
     }
 }
 
-function build(dir, paths, inline) {
+function build(dir, paths, style) {
     let cwd = process.cwd().toString().trim();
     let indexfile = '';
     indexfile = indexfile + mainFileHeadStart;
-    if (!inline) {
-        indexfile = indexfile + wrapStylesWithTag(styler.compoundStyles());
-    } else {
+    if (style) {
         let filename = 'styles.css';
         styler.createAndWriteCssFile(dir, filename);
         indexfile = indexfile + `<link rel="stylesheet" href="${filename}"/>`;
